@@ -7,9 +7,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type UserData struct {
+	UUID        string `json:"uuid"`
+	Name        string `json:"name"`
+	Username    string `json:"username"`
+	Mail        string `json:"mail"`
+	Role        string `json:"role"`
+	PhoneNumber string `json:"phoneNumber"`
+}
+
 type Claims struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
+	User UserData `json:"user"` // <-- INI KUNCINYA
 	jwt.RegisteredClaims
 }
 
@@ -17,8 +25,14 @@ type Claims struct {
 func GenerateToken(userID string, role string, duration time.Duration, secret string) (string, error) {
 	expirationTime := time.Now().Add(duration)
 	claims := &Claims{
-		UserID: userID,
-		Role:   role,
+		User: UserData{
+			UUID:        userID,
+			Role:        role,
+			Name:        "",
+			Username:    "",
+			Mail:        "",
+			PhoneNumber: "",
+		},
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
